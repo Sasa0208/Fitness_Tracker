@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tracker Kebugaran Jasmani — Kelompok 1</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f0efe9;
+    --border: #e2e0d8;
+    --border2: #cccabd;
+    --text: #1a1917;
+    --text2: #6b6960;
+    --text3: #9b9a93;
+    --green: #2d7a4f;
+    --green-bg: #e8f5ee;
+    --amber: #a05c00;
+    --amber-bg: #fff3dc;
+    --red: #c0392b;
+    --red-bg: #fdecea;
+    --accent: #2563eb;
+    --accent-bg: #eff6ff;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-left h1 { font-size: 16px; font-weight: 600; color: var(--text); }
+  .header-left p { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+  .badge-stem {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--accent-bg);
+    color: var(--accent);
+    border: 1px solid #bfdbfe;
+  }
+
+  main { max-width: 780px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 4px;
+    margin-bottom: 1.5rem;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 8px 4px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .tab-btn:hover { background: var(--surface2); color: var(--text); }
+  .tab-btn.active { background: var(--text); color: #fff; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 1rem;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus { border-color: var(--accent); }
+
+  .btn {
+    padding: 8px 18px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn:hover { background: var(--surface2); }
+  .btn-primary { background: var(--text); color: #fff; border-color: var(--text); }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-danger { color: var(--red); border-color: #f5c6c6; }
+  .btn-danger:hover { background: var(--red-bg); }
+
+  .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* Data Table */
+  .data-table { width: 100%; }
+  .data-row {
+    display: grid;
+    grid-template-columns: 2fr 80px 80px 110px;
+    gap: 8px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+    font-size: 13px;
+  }
+
+  .data-row:last-child { border-bottom: none; }
+  .data-head { font-size: 11px; color: var(--text3); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 20px;
+    display: inline-block;
+  }
+
+  .badge-green { background: var(--green-bg); color: var(--green); }
+  .badge-amber { background: var(--amber-bg); color: var(--amber); }
+  .badge-red { background: var(--red-bg); color: var(--red); }
+
+  .progress-bar {
+    height: 5px;
+    background: var(--surface2);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 5px;
+  }
+
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.4s; }
+
+  /* Metrics */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+    margin-bottom: 1rem;
+  }
+
+  .metric-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+  }
+
+  .metric-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .metric-val { font-size: 26px; font-weight: 600; color: var(--text); line-height: 1; }
+  .metric-unit { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+  /* Timer */
+  .timer-display {
+    font-family: 'DM Mono', monospace;
+    font-size: 52px;
+    font-weight: 500;
+    text-align: center;
+    color: var(--text);
+    padding: 2rem 0 1.5rem;
+    letter-spacing: 2px;
+  }
+
+  .timer-btns { display: flex; gap: 10px; justify-content: center; margin-bottom: 1.5rem; }
+
+  .lap-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text2);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* CT Steps */
+  .ct-step {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .ct-step:last-child { border-bottom: none; }
+
+  .ct-num {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--text);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .ct-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .ct-desc { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+  .eval-item {
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+  }
+
+  .eval-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .eval-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .eval-desc { font-size: 12px; color: var(--text2); line-height: 1.6; }
+
+  .empty-state {
+    text-align: center;
+    padding: 2.5rem;
+    color: var(--text3);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .empty-icon { font-size: 28px; margin-bottom: 8px; }
+
+  /* Chart bars */
+  .chart-wrap { padding: 1rem 0; }
+  .chart-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 12px; }
+  .chart-label { width: 70px; color: var(--text2); text-align: right; flex-shrink: 0; }
+  .chart-bar-wrap { flex: 1; background: var(--surface2); border-radius: 4px; height: 22px; overflow: hidden; }
+  .chart-bar { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 8px; font-size: 11px; font-weight: 500; color: #fff; transition: width 0.5s; }
+  .chart-val { width: 40px; color: var(--text2); flex-shrink: 0; }
+
+  @media (max-width: 500px) {
+    header { padding: 1rem; }
+    main { padding: 1rem; }
+    .tab-btn { font-size: 11px; }
+    .timer-display { font-size: 36px; }
+    .data-row { grid-template-columns: 2fr 60px 60px 90px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>Tracker Kebugaran Jasmani</h1>
+    <p>Proyek STEM + Computational Thinking — Kelompok 1</p>
+  </div>
+  <span class="badge-stem">STEM + CT</span>
+</header>
+
+<main>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('catat', this)">📋 Catat</button>
+    <button class="tab-btn" onclick="showTab('timer', this)">⏱ Stopwatch</button>
+    <button class="tab-btn" onclick="showTab('analisis', this)">📊 Analisis</button>
+    <button class="tab-btn" onclick="showTab('ct', this)">🧠 Algoritma CT</button>
+  </div>
+
+  <!-- TAB 1: CATAT -->
+  <div id="tab-catat" class="section active">
+    <div class="card">
+      <p class="card-title">Input data latihan</p>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nama peserta</label>
+          <input type="text" id="nama" placeholder="Contoh: Budi">
+        </div>
+        <div class="form-group">
+          <label>Jenis latihan</label>
+          <select id="jenis">
+            <option value="Push-up">Push-up</option>
+            <option value="Sit-up">Sit-up</option>
+            <option value="Lari">Lari (meter)</option>
+            <option value="Plank">Plank (detik)</option>
+            <option value="Squat">Squat</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Repetisi / Hasil</label>
+          <input type="number" id="reps" min="1" placeholder="Misal: 20">
+        </div>
+        <div class="form-group">
+          <label>Durasi (detik)</label>
+          <input type="number" id="durasi" min="1" placeholder="Misal: 60">
+        </div>
+        <div class="form-group">
+          <label>Sesi ke-</label>
+          <input type="number" id="sesi" min="1" max="20" value="1">
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="simpanData()">+ Simpan Data</button>
+        <button class="btn btn-danger" onclick="hapusSemua()">Hapus Semua</button>
+      </div>
+    </div>
+
+    <div id="tabel-wrap">
+      <div class="empty-state">
+        <div class="empty-icon">📝</div>
+        Belum ada data latihan.<br>Isi form di atas untuk mulai mencatat.
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: STOPWATCH -->
+  <div id="tab-timer" class="section">
+    <div class="card">
+      <p class="card-title">Stopwatch latihan</p>
+      <div class="timer-display" id="timer-display">00:00.0</div>
+      <div class="timer-btns">
+        <button class="btn btn-primary" id="btn-start" onclick="toggleTimer()">▶ Mulai</button>
+        <button class="btn" onclick="lapTimer()">🏁 Lap</button>
+        <button class="btn btn-danger" onclick="resetTimer()">↺ Reset</button>
+      </div>
+      <div id="lap-list"></div>
+    </div>
+  </div>
+
+  <!-- TAB 3: ANALISIS -->
+  <div id="tab-analisis" class="section">
+    <div class="metrics-grid" id="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-label">Total sesi</div>
+        <div class="metric-val" id="m-sesi">0</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Jenis latihan</div>
+        <div class="metric-val" id="m-jenis">0</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Total repetisi</div>
+        <div class="metric-val" id="m-reps">0</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Target tercapai</div>
+        <div class="metric-val" id="m-tercapai">0</div>
+        <div class="metric-unit">jenis latihan</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-title">Progress per jenis latihan</p>
+      <div id="analisis-detail">
+        <div class="empty-state">
+          <div class="empty-icon">📊</div>
+          Belum ada data untuk dianalisis.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: CT -->
+  <div id="tab-ct" class="section">
+    <div class="card">
+      <p class="card-title">Komponen Computational Thinking</p>
+      <div class="ct-step">
+        <div class="ct-num">1</div>
+        <div>
+          <div class="ct-title">Dekomposisi</div>
+          <div class="ct-desc">Latihan dibagi jadi bagian kecil — push-up, sit-up, lari, plank — masing-masing diukur terpisah agar mudah dianalisis.</div>
+        </div>
+      </div>
+      <div class="ct-step">
+        <div class="ct-num">2</div>
+        <div>
+          <div class="ct-title">Abstraksi</div>
+          <div class="ct-desc">Performa fisik disederhanakan jadi angka: jumlah repetisi dan durasi — mudah dibandingkan antar sesi dan antar peserta.</div>
+        </div>
+      </div>
+      <div class="ct-step">
+        <div class="ct-num">3</div>
+        <div>
+          <div class="ct-title">Pengenalan Pola</div>
+          <div class="ct-desc">Data antar sesi dibandingkan untuk melihat tren peningkatan atau penurunan — dasar untuk menyesuaikan intensitas latihan.</div>
+        </div>
+      </div>
+      <div class="ct-step">
+        <div class="ct-num">4</div>
+        <div>
+          <div class="ct-title">Conditional Logic (Logika Kondisional)</div>
+          <div class="ct-desc">Jika repetisi &lt; target → tingkatkan intensitas. Jika sudah melampaui target → naikkan target atau tambah jenis latihan baru.</div>
+        </div>
+      </div>
+      <div class="ct-step">
+        <div class="ct-num">5</div>
+        <div>
+          <div class="ct-title">Algoritma Rutinitas</div>
+          <div class="ct-desc">Urutan logis: Tes awal → Catat data → Analisis → Evaluasi hasil → Sesuaikan rutinitas → Ulangi siklus.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-title">Evaluasi kondisional otomatis</p>
+      <div id="evaluasi-ct">
+        <div class="empty-state">
+          <div class="empty-icon">🧠</div>
+          Catat data latihan dulu untuk melihat evaluasi kondisional.
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const TARGET = { 'Push-up': 20, 'Sit-up': 20, 'Lari': 400, 'Plank': 30, 'Squat': 15 };
+  let data = JSON.parse(localStorage.getItem('kb_data') || '[]');
+
+  // ---------- TABS ----------
+  function showTab(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    btn.classList.add('active');
+    if (id === 'analisis') renderAnalisis();
+    if (id === 'ct') renderEvaluasiCT();
+  }
+
+  // ---------- CATAT ----------
+  function simpanData() {
+    const nama = document.getElementById('nama').value.trim() || 'Peserta';
+    const jenis = document.getElementById('jenis').value;
+    const reps = parseInt(document.getElementById('reps').value) || 0;
+    const durasi = parseInt(document.getElementById('durasi').value) || 0;
+    const sesi = parseInt(document.getElementById('sesi').value) || 1;
+    if (!reps) { alert('Masukkan jumlah repetisi atau hasil terlebih dahulu.'); return; }
+    data.push({ id: Date.now(), nama, jenis, reps, durasi, sesi });
+    simpan();
+    renderTabel();
+    document.getElementById('reps').value = '';
+    document.getElementById('durasi').value = '';
+  }
+
+  function hapusSemua() {
+    if (!data.length) return;
+    if (confirm('Hapus semua data latihan?')) { data = []; simpan(); renderTabel(); }
+  }
+
+  function hapus(id) {
+    data = data.filter(d => d.id !== id);
+    simpan();
+    renderTabel();
+  }
+
+  function simpan() { localStorage.setItem('kb_data', JSON.stringify(data)); }
+
+  function badgeHTML(pct) {
+    if (pct >= 100) return '<span class="badge badge-green">✓ Tercapai</span>';
+    if (pct >= 60) return '<span class="badge badge-amber">~ Hampir</span>';
+    return '<span class="badge badge-red">✗ Perlu latihan</span>';
+  }
+
+  function barColor(pct) { return pct >= 100 ? '#2d7a4f' : pct >= 60 ? '#a05c00' : '#c0392b'; }
+
+  function renderTabel() {
+    const el = document.getElementById('tabel-wrap');
+    if (!data.length) {
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div>Belum ada data latihan.<br>Isi form di atas untuk mulai mencatat.</div>';
+      return;
+    }
+    let html = '<div class="card"><div class="data-table">';
+    html += '<div class="data-row data-head"><span>Peserta & Latihan</span><span>Sesi</span><span>Reps</span><span>Status</span></div>';
+    data.slice().reverse().forEach(d => {
+      const target = TARGET[d.jenis] || 1;
+      const pct = Math.min(100, Math.round(d.reps / target * 100));
+      html += `<div class="data-row">
+        <div>
+          <div style="font-weight:500;color:var(--text)">${d.nama}</div>
+          <div style="font-size:11px;color:var(--text3)">${d.jenis}${d.durasi ? ' · ' + d.durasi + 'dtk' : ''}</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${barColor(pct)}"></div></div>
+        </div>
+        <div>${d.sesi}</div>
+        <div style="font-weight:600">${d.reps}</div>
+        <div>${badgeHTML(pct)}<br><button class="btn btn-danger" style="font-size:10px;padding:2px 8px;margin-top:4px" onclick="hapus(${d.id})">hapus</button></div>
+      </div>`;
+    });
+    html += '</div></div>';
+    el.innerHTML = html;
+  }
+
+  // ---------- ANALISIS ----------
+  function renderAnalisis() {
+    const jenisSet = new Set(data.map(d => d.jenis));
+    const totalReps = data.reduce((a, d) => a + d.reps, 0);
+    document.getElementById('m-sesi').textContent = data.length;
+    document.getElementById('m-jenis').textContent = jenisSet.size;
+    document.getElementById('m-reps').textContent = totalReps;
+
+    const byJenis = {};
+    data.forEach(d => { if (!byJenis[d.jenis]) byJenis[d.jenis] = []; byJenis[d.jenis].push(d.reps); });
+    const tercapai = Object.entries(byJenis).filter(([j, vals]) => {
+      const avg = vals.reduce((a,b)=>a+b,0)/vals.length;
+      return avg >= (TARGET[j] || 1);
+    }).length;
+    document.getElementById('m-tercapai').textContent = tercapai;
+
+    const el = document.getElementById('analisis-detail');
+    if (!data.length) { el.innerHTML = '<div class="empty-state"><div class="empty-icon">📊</div>Belum ada data.</div>'; return; }
+
+    let html = '<div class="chart-wrap">';
+    Object.entries(byJenis).forEach(([jenis, vals]) => {
+      const avg = Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+      const max = Math.max(...vals);
+      const target = TARGET[jenis] || 1;
+      const pct = Math.min(100, Math.round(avg / target * 100));
+      html += `<div style="margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px">
+          <span style="font-weight:600;color:var(--text)">${jenis}</span>
+          <span style="color:var(--text3)">Rata-rata: <strong style="color:var(--text)">${avg}</strong> | Terbaik: <strong>${max}</strong> | Target: <strong>${target}</strong></span>
+        </div>
+        <div class="chart-row" style="margin:0">
+          <div class="chart-bar-wrap">
+            <div class="chart-bar" style="width:${pct}%;background:${barColor(pct)};min-width:${pct>0?'4px':'0'}">
+              ${pct > 15 ? pct + '%' : ''}
+            </div>
+          </div>
+          <div style="width:50px;font-size:11px;color:var(--text3);text-align:right">${pct}%</div>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px">${pct >= 100 ? '✓ Target tercapai' : pct >= 60 ? '~ Mendekati target' : '✗ Perlu ditingkatkan'}</div>
+      </div>`;
+    });
+    html += '</div>';
+    el.innerHTML = html;
+  }
+
+  // ---------- EVALUASI CT ----------
+  function renderEvaluasiCT() {
+    const el = document.getElementById('evaluasi-ct');
+    if (!data.length) {
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon">🧠</div>Catat data latihan dulu untuk melihat evaluasi kondisional.</div>';
+      return;
+    }
+    const byJenis = {};
+    data.forEach(d => { if (!byJenis[d.jenis]) byJenis[d.jenis] = []; byJenis[d.jenis].push(d.reps); });
+    let html = '';
+    Object.entries(byJenis).forEach(([jenis, vals]) => {
+      const avg = Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+      const target = TARGET[jenis] || 1;
+      const pct = Math.min(100, Math.round(avg / target * 100));
+      let saran, cls;
+      if (pct >= 100) {
+        saran = `IF rata-rata (${avg}) ≥ target (${target}) → THEN naikkan target atau tambah variasi latihan.`;
+        cls = 'badge-green';
+      } else if (pct >= 60) {
+        saran = `IF rata-rata (${avg}) < target (${target}) → THEN tambah 2 sesi per minggu dan fokus pada ${jenis}.`;
+        cls = 'badge-amber';
+      } else {
+        saran = `IF rata-rata (${avg}) jauh di bawah target (${target}) → THEN mulai dari dasar, kurangi beban, tingkatkan bertahap.`;
+        cls = 'badge-red';
+      }
+      html += `<div class="eval-item">
+        <div class="eval-head">
+          <div class="eval-name">${jenis}</div>
+          <span class="badge ${cls}">${avg >= target ? 'Tercapai' : avg >= target*0.6 ? 'Hampir' : 'Perlu latihan'}</span>
+        </div>
+        <div class="eval-desc" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text2)">${saran}</div>
+      </div>`;
+    });
+    el.innerHTML = html;
+  }
+
+  // ---------- TIMER ----------
+  let timerMs = 0, timerRunning = false, timerInterval = null, lapCount = 0;
+
+  function toggleTimer() {
+    const btn = document.getElementById('btn-start');
+    if (timerRunning) {
+      clearInterval(timerInterval);
+      timerRunning = false;
+      btn.textContent = '▶ Lanjut';
+    } else {
+      const start = Date.now() - timerMs;
+      timerInterval = setInterval(() => { timerMs = Date.now() - start; updateDisplay(); }, 100);
+      timerRunning = true;
+      btn.textContent = '⏸ Pause';
+    }
+  }
+
+  function lapTimer() {
+    if (!timerRunning) return;
+    lapCount++;
+    const txt = document.getElementById('timer-display').textContent;
+    const laps = document.getElementById('lap-list');
+    const item = document.createElement('div');
+    item.className = 'lap-item';
+    item.innerHTML = `<span>Lap ${lapCount}</span><span>${txt}</span>`;
+    laps.prepend(item);
+  }
+
+  function resetTimer() {
+    clearInterval(timerInterval);
+    timerRunning = false; timerMs = 0; lapCount = 0;
+    document.getElementById('timer-display').textContent = '00:00.0';
+    document.getElementById('btn-start').textContent = '▶ Mulai';
+    document.getElementById('lap-list').innerHTML = '';
+  }
+
+  function updateDisplay() {
+    const dec = Math.floor((timerMs % 1000) / 100);
+    const s = Math.floor(timerMs / 1000) % 60;
+    const m = Math.floor(timerMs / 60000);
+    document.getElementById('timer-display').textContent =
+      String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0') + '.' + dec;
+  }
+
+  // Init
+  renderTabel();
+</script>
+</body>
+</html>
